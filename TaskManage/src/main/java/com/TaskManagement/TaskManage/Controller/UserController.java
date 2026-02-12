@@ -1,0 +1,61 @@
+package com.TaskManagement.TaskManage.Controller;
+
+import com.TaskManagement.TaskManage.Entity.User;
+import com.TaskManagement.TaskManage.Service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // POST - Create User
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        return ResponseEntity.status(201)
+                .body(userService.createUser(user));
+    }
+
+    // GET - All Users
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    // GET - User by ID (Using RequestParam)
+    @GetMapping("/by-id")
+    public ResponseEntity<User> getUserById(@RequestParam Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    // PUT - Update User (Using RequestParam)
+    @PutMapping
+    public ResponseEntity<User> updateUser(
+            @RequestParam Long id,
+            @Valid @RequestBody User user) {
+
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    // DELETE - Delete User (Using RequestParam)
+    @DeleteMapping
+    public ResponseEntity<Void> deleteUser(@RequestParam Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+}
