@@ -1,9 +1,11 @@
 package com.TaskManagement.TaskManage.Controller;
 
 
+import com.TaskManagement.TaskManage.Common.Payload.TaskPageResponse;
 import com.TaskManagement.TaskManage.Entity.Task;
 import com.TaskManagement.TaskManage.Service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,8 +29,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public TaskPageResponse getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return taskService.getAllTasks(page, size, sortBy, direction);
     }
 
     @GetMapping("/user/{userId}")
