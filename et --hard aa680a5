@@ -1,0 +1,16 @@
+[33mff0a051[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33maa680a5[m HEAD@{1}: commit: Added pagination, sorting, and custom response for task listing API
+[33mff0a051[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{2}: commit: centralize exception handling using @RestControllerAdvice
+[33m4a98b00[m HEAD@{3}: commit: Implement User & Task CRUD with user-task mapping and validation
+[33m81261e7[m HEAD@{4}: commit: Initial commit: Spring Boot project with placeholders and .env ignored
+[33m85f9b17[m HEAD@{5}: commit: Flatten project structure
+[33m5eda6b6[m HEAD@{6}: commit: Move .gitignore to repository root
+[33mf746b06[m HEAD@{7}: commit: Ignore IntelliJ and target folders
+[33m03a3454[m HEAD@{8}: commit: Add .gitignore
+[33m3e461a9[m HEAD@{9}: commit: Removed .idea folder from repository
+[33m75d4412[m HEAD@{10}: commit: User CRUD completed with sorting and validation
+[33md2df0c6[m HEAD@{11}: commit: Added Entity and enum for Task Status
+[33md43c2d1[m HEAD@{12}: commit (merge): readme saved
+[33mdff3e8e[m HEAD@{13}: Branch: renamed refs/heads/main to refs/heads/main
+[33mdff3e8e[m HEAD@{15}: Branch: renamed refs/heads/master to refs/heads/main
+[33mdff3e8e[m HEAD@{17}: commit (initial): Initial Spring Boot Project Setup
