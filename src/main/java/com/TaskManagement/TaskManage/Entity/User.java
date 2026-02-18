@@ -36,6 +36,10 @@ public class User {
     @Column(nullable = false, unique = true)
     @Email
     private String email;
+    @NotBlank
+    @Column(nullable = false)
+    private String password;
+
 
     @Transient
     private List<Task> tasks;

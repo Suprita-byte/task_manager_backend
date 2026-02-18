@@ -6,6 +6,7 @@ import com.TaskManagement.TaskManage.Repository.TaskRepository;
 import com.TaskManagement.TaskManage.Repository.UserRepository;
 import com.TaskManagement.TaskManage.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +16,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final  TaskRepository taskRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // Constructor Injection (Best Practice)
     @Override
     public User createUser(User user) {
+        // Encode password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
