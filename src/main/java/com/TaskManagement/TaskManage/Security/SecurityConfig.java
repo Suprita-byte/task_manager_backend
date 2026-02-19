@@ -32,16 +32,42 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+
+                        // USER APIs
+                        .requestMatchers(HttpMethod.GET, "/api/users/by-id").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/users").authenticated()
+
+                        // ADMIN only
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+
+                        // TASK APIs
+                        .requestMatchers("/api/tasks/**").hasAnyRole("ADMIN", "USER")
+
                         .anyRequest().authenticated()
                 )
 
+
+
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).exceptionHandling(ex ->
-                        ex.authenticationEntryPoint((request, response, authException) -> {
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                         })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("""
+        {
+          "status": 403,
+          "error": "Forbidden",
+          "message": "You are not allowed to perform this action"
+        }
+        """);
+                        })
                 );
+
 
         http.addFilterBefore(jwtFilter,
                 UsernamePasswordAuthenticationFilter.class);

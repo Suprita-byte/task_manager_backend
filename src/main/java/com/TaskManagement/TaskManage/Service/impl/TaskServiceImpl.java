@@ -6,6 +6,7 @@ import com.TaskManagement.TaskManage.Common.UserDefinedExceptions.ResourceNotFou
 import com.TaskManagement.TaskManage.Entity.Task;
 import com.TaskManagement.TaskManage.Repository.TaskRepository;
 import com.TaskManagement.TaskManage.Repository.UserRepository;
+import com.TaskManagement.TaskManage.Security.SecurityUtil;
 import com.TaskManagement.TaskManage.Service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import com.TaskManagement.TaskManage.Common.UserDefinedExceptions.AccessDeniedException;
 
 import java.util.List;
 @Service
@@ -24,13 +27,20 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(Task task) {
-        if (!userRepository.existsById(task.getUserId())) {
-            throw new ResourceNotFoundException(
-                    "User not found with id: " + task.getUserId());
+
+        if (!SecurityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admin can assign tasks");
         }
+
+        if (!userRepository.existsById(task.getUserId())) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
         task.setStatus(TaskStatus.TODO);
         return taskRepository.save(task);
     }
+
+
 
     @Override
     public TaskPageResponse getAllTasks(int page, int size, String sortBy, String direction) {
@@ -41,7 +51,18 @@ public class TaskServiceImpl implements TaskService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Task> taskPage = taskRepository.findAll(pageable);
+        Page<Task> taskPage;
+
+        if (SecurityUtil.isAdmin()) {
+            taskPage = taskRepository.findAll(pageable);
+        } else {
+            String email = SecurityUtil.getCurrentUserEmail();
+            Long userId = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"))
+                    .getId();
+
+            taskPage = taskRepository.findByUserId(userId, pageable);
+        }
 
         return new TaskPageResponse(
                 taskPage.getContent(),
@@ -58,18 +79,34 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTaskStatus(Long taskId, String status) {
+
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        task.setStatus(TaskStatus.valueOf(status));
+        if (!SecurityUtil.isAdmin()) {
+            String email = SecurityUtil.getCurrentUserEmail();
+            Long userId = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"))
+                    .getId();
 
+            if (!task.getUserId().equals(userId)) {
+                throw new AccessDeniedException("You can update only your own tasks");
+            }
+        }
+
+        task.setStatus(TaskStatus.valueOf(status));
         return taskRepository.save(task);
     }
 
+
     @Override
     public void deleteTask(Long taskId) {
+
+        if (!SecurityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admin can delete tasks");
+        }
+
         taskRepository.deleteById(taskId);
-
-
     }
+
 }

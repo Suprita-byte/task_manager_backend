@@ -1,6 +1,6 @@
 package com.TaskManagement.TaskManage.Security;
 
-import io.jsonwebtoken.Claims;
+import com.TaskManagement.TaskManage.Entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -12,31 +12,43 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY =
+    private static final String SECRET_KEY =
             "this-is-my-super-secret-key-for-jwt-which-should-be-256-bits";
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(String email) {
-
+    // ✅ Generate Token
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(email)   // ✅ correct for 0.11.5
+                .setSubject(user.getEmail()) // IMPORTANT
+                .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // ✅ FIX
                 .compact();
     }
 
+    // ✅ Extract Email
     public String extractEmail(String token) {
-
-        Claims claims = Jwts.parserBuilder()   // ✅ correct parser for 0.11.5
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
+                .getBody()
+                .getSubject();
     }
+
+    // ✅ Extract Role
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
+
+
 }
