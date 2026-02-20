@@ -16,4 +16,5 @@ public interface TaskService {
     Task updateTaskStatus(Long taskId, String status);
 
     void deleteTask(Long taskId);
+    public List<Task> getMyTasks();
 }

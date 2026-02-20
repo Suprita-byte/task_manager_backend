@@ -6,6 +6,7 @@ import com.TaskManagement.TaskManage.Entity.Task;
 import com.TaskManagement.TaskManage.Service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,11 +24,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskController {
     private final TaskService taskService;
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Task createTask(@RequestBody Task task) {
         return taskService.createTask(task);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
     public TaskPageResponse getAllTasks(
             @RequestParam(defaultValue = "0") int page,
@@ -38,17 +42,27 @@ public class TaskController {
         return taskService.getAllTasks(page, size, sortBy, direction);
     }
 
+
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/{userId}")
     public List<Task> getTasksByUser(@PathVariable Long userId) {
         return taskService.getTasksByUser(userId);
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/my-tasks")
+    public List<Task> getMyTasks() {
+        return taskService.getMyTasks();
+    }
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{taskId}")
     public Task updateStatus(@PathVariable Long taskId,
                              @RequestParam String status) {
         return taskService.updateTaskStatus(taskId, status);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{taskId}")
     public String deleteTask(@PathVariable Long taskId) {
         taskService.deleteTask(taskId);

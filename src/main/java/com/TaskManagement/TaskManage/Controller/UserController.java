@@ -4,6 +4,7 @@ import com.TaskManagement.TaskManage.Entity.User;
 import com.TaskManagement.TaskManage.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,12 +33,14 @@ public class UserController {
     }
 
     // GET - All Users
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // GET - User by ID (Using RequestParam)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/by-id")
     public ResponseEntity<User> getUserById(@RequestParam Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
@@ -53,6 +56,7 @@ public class UserController {
     }
 
     // DELETE - Delete User (Using RequestParam)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(@RequestParam Long id) {
         userService.deleteUser(id);

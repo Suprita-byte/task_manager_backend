@@ -108,5 +108,14 @@ public class TaskServiceImpl implements TaskService {
 
         taskRepository.deleteById(taskId);
     }
+    @Override
+    public List<Task> getMyTasks() {
+        String email = SecurityUtil.getCurrentUserEmail();
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"))
+                .getId();
+
+        return taskRepository.findByUserId(userId);
+    }
 
 }
