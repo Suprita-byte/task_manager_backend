@@ -43,4 +43,14 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // JWT is stateless, so just tell client to delete token
+        return ResponseEntity.ok().body(
+                Map.of(
+                        "message", "Logged out successfully. Please remove token on client side."
+                )
+        );
+    }
 }
