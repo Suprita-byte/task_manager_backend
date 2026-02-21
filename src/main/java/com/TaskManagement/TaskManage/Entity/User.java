@@ -1,6 +1,8 @@
 package com.TaskManagement.TaskManage.Entity;
 
 import com.TaskManagement.TaskManage.Common.Enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,6 +41,8 @@ public class User {
     @Column(nullable = false, unique = true)
     @Email
     private String email;
+    @Schema(hidden = true)
+    @JsonIgnore
     @NotBlank
     @Column(nullable = false)
     private String password;

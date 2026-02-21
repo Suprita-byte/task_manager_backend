@@ -4,6 +4,7 @@ package com.TaskManagement.TaskManage.Controller;
 import com.TaskManagement.TaskManage.Common.Payload.TaskPageResponse;
 import com.TaskManagement.TaskManage.Entity.Task;
 import com.TaskManagement.TaskManage.Service.TaskService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +27,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create task", description = "Admin can assign task to user")
     @PostMapping
     public Task createTask(@RequestBody Task task) {
         return taskService.createTask(task);
