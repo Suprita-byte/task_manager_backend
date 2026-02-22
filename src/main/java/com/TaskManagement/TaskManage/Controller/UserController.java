@@ -1,5 +1,7 @@
 package com.TaskManagement.TaskManage.Controller;
 
+import com.TaskManagement.TaskManage.Common.dto.ChangePasswordRequest;
+import com.TaskManagement.TaskManage.Common.dto.UpdateUserRequest;
 import com.TaskManagement.TaskManage.Entity.User;
 import com.TaskManagement.TaskManage.Service.UserService;
 import jakarta.validation.Valid;
@@ -7,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,12 +51,30 @@ public class UserController {
     }
 
     // PUT - Update User (Using RequestParam)
-    @PutMapping
-    public ResponseEntity<User> updateUser(
-            @RequestParam Long id,
-            @Valid @RequestBody User user) {
+//    @PutMapping
+//    public ResponseEntity<User> updateUser(
+//            @RequestParam Long id,
+//            @Valid @RequestBody User user) {
+//
+//        return ResponseEntity.ok(userService.updateUser(id, user));
+//    }
 
-        return ResponseEntity.ok(userService.updateUser(id, user));
+    // ✅ PATCH - UPDATE USER (SELF OR ADMIN)
+    @PatchMapping("/{id}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable Long id,
+            @RequestBody UpdateUserRequest request) {
+
+        return ResponseEntity.ok(userService.updateUser(id, request));
+    }
+    // ✅ PATCH - CHANGE PASSWORD (SELF ONLY)
+    @PatchMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Long id,
+            @RequestBody ChangePasswordRequest request) {
+
+        userService.changePassword(id, request);
+        return ResponseEntity.ok("Password updated successfully");
     }
 
     // DELETE - Delete User (Using RequestParam)

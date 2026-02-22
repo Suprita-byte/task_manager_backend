@@ -3,6 +3,8 @@ package com.TaskManagement.TaskManage.Service.impl;
 import com.TaskManagement.TaskManage.Common.Enums.Role;
 import com.TaskManagement.TaskManage.Common.UserDefinedExceptions.AccessDeniedException;
 import com.TaskManagement.TaskManage.Common.UserDefinedExceptions.ResourceNotFoundException;
+import com.TaskManagement.TaskManage.Common.dto.ChangePasswordRequest;
+import com.TaskManagement.TaskManage.Common.dto.UpdateUserRequest;
 import com.TaskManagement.TaskManage.Entity.User;
 import com.TaskManagement.TaskManage.Repository.TaskRepository;
 import com.TaskManagement.TaskManage.Repository.UserRepository;
@@ -56,17 +58,71 @@ public class UserServiceImpl implements UserService {
         return requestedUser;
     }
 
-    @Override
-    public User updateUser(Long id, User user) {
+//    @Override
+//    public User updateUser(Long id, User user) {
+//
+//        User existingUser = userRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        existingUser.setName(user.getName());
+//        existingUser.setEmail(user.getEmail());
+//
+//        return userRepository.save(existingUser);
+//    }
 
-        User existingUser = userRepository.findById(id)
+    // ✅ PATCH UPDATE USER
+    @Override
+    public User updateUser(Long id, UpdateUserRequest request) {
+
+        User requestedUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        existingUser.setName(user.getName());
-        existingUser.setEmail(user.getEmail());
+        // 🔐 AUTHORIZATION: admin OR self
+        if (!SecurityUtil.isAdmin()) {
+            String loggedEmail = SecurityUtil.getCurrentUserEmail();
+            if (!requestedUser.getEmail().equals(loggedEmail)) {
+                throw new AccessDeniedException("You can update only your own profile");
+            }
+        }
 
-        return userRepository.save(existingUser);
+        if (request.getName() != null) {
+            requestedUser.setName(request.getName());
+        }
+
+        if (request.getEmail() != null) {
+            requestedUser.setEmail(request.getEmail());
+        }
+
+        // 🔐 Only ADMIN can update role
+        if (request.getRole() != null && SecurityUtil.isAdmin()) {
+            requestedUser.setRole(request.getRole());
+        }
+
+        return userRepository.save(requestedUser);
     }
+
+    // ✅ CHANGE PASSWORD (SELF ONLY)
+    @Override
+    public void changePassword(Long id, ChangePasswordRequest request) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // 🔐 Only self can change password
+        String loggedEmail = SecurityUtil.getCurrentUserEmail();
+        if (!user.getEmail().equals(loggedEmail)) {
+            throw new AccessDeniedException("You can change only your own password");
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+
 
     @Override
     public void deleteUser(Long id) {
