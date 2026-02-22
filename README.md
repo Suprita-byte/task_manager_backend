@@ -26,6 +26,20 @@ A Spring Boot backend application for managing users and tasks.
 - Entity (Model) layer
 - Security (JWT, Filters, Config)
 
+## API Documentation (Swagger)
+
+Swagger UI is integrated for API documentation and interactive testing.
+
+### URL
+http://localhost:8080/swagger-ui/index.html
+
+### Authentication
+- APIs are secured using JWT authentication
+- Click **Authorize** in Swagger UI
+- Enter your JWT token in the format:
+- Bearer <your_token>
+- After authorization, you can test all secured endpoints directly from Swagger.
+
 ## How to Run (Docker)
 1. Clone the repository
 2. Create `.env` file (DB credentials)
