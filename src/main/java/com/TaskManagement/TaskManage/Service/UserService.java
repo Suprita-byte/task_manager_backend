@@ -1,13 +1,14 @@
 package com.TaskManagement.TaskManage.Service;
 
 import com.TaskManagement.TaskManage.Common.dto.ChangePasswordRequest;
+import com.TaskManagement.TaskManage.Common.dto.CreateUserRequest;
 import com.TaskManagement.TaskManage.Common.dto.UpdateUserRequest;
 import com.TaskManagement.TaskManage.Entity.User;
 
 import java.util.List;
 
 public interface UserService {
-    User createUser(User user);
+    User createUser(CreateUserRequest request);
 
     List<User> getAllUsers();
 

@@ -2,6 +2,7 @@ package com.TaskManagement.TaskManage.Entity;
 
 import com.TaskManagement.TaskManage.Common.Enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +43,7 @@ public class User {
     @Email
     private String email;
     @Schema(hidden = true)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
     @Column(nullable = false)
     private String password;

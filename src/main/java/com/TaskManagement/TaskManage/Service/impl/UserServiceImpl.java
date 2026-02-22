@@ -4,6 +4,7 @@ import com.TaskManagement.TaskManage.Common.Enums.Role;
 import com.TaskManagement.TaskManage.Common.UserDefinedExceptions.AccessDeniedException;
 import com.TaskManagement.TaskManage.Common.UserDefinedExceptions.ResourceNotFoundException;
 import com.TaskManagement.TaskManage.Common.dto.ChangePasswordRequest;
+import com.TaskManagement.TaskManage.Common.dto.CreateUserRequest;
 import com.TaskManagement.TaskManage.Common.dto.UpdateUserRequest;
 import com.TaskManagement.TaskManage.Entity.User;
 import com.TaskManagement.TaskManage.Repository.TaskRepository;
@@ -25,12 +26,15 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User createUser(CreateUserRequest request) {
 
-        if (user.getRole() == null) {
-            user.setRole(Role.USER);
-        }
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // 🔐 FORCE ROLE
+        user.setRole(Role.USER);
 
         return userRepository.save(user);
     }

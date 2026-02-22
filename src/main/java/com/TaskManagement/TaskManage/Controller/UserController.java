@@ -1,6 +1,7 @@
 package com.TaskManagement.TaskManage.Controller;
 
 import com.TaskManagement.TaskManage.Common.dto.ChangePasswordRequest;
+import com.TaskManagement.TaskManage.Common.dto.CreateUserRequest;
 import com.TaskManagement.TaskManage.Common.dto.UpdateUserRequest;
 import com.TaskManagement.TaskManage.Entity.User;
 import com.TaskManagement.TaskManage.Service.UserService;
@@ -30,10 +31,11 @@ public class UserController {
     }
 
     // POST - Create User
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(201)
-                .body(userService.createUser(user));
+                .body(userService.createUser(request));
     }
 
     // GET - All Users

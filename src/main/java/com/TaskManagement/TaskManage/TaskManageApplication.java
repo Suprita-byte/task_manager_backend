@@ -7,7 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TaskManageApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskManageApplication.class, args);
+
+        //Admin password creation so that admin can login and create other user and also any other admin
+        System.out.println(
+                new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder()
+                        .encode("admin123")
+        );
+
+        SpringApplication.run(TaskManageApplication.class, args);
 	}
 
 }
