@@ -58,26 +58,16 @@ public class UserServiceImpl implements UserService {
         return requestedUser;
     }
 
-//    @Override
-//    public User updateUser(Long id, User user) {
-//
-//        User existingUser = userRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//
-//        existingUser.setName(user.getName());
-//        existingUser.setEmail(user.getEmail());
-//
-//        return userRepository.save(existingUser);
-//    }
 
-    // ✅ PATCH UPDATE USER
+
+    //  PATCH UPDATE USER
     @Override
     public User updateUser(Long id, UpdateUserRequest request) {
 
         User requestedUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // 🔐 AUTHORIZATION: admin OR self
+        //  AUTHORIZATION: admin OR self
         if (!SecurityUtil.isAdmin()) {
             String loggedEmail = SecurityUtil.getCurrentUserEmail();
             if (!requestedUser.getEmail().equals(loggedEmail)) {
@@ -93,7 +83,7 @@ public class UserServiceImpl implements UserService {
             requestedUser.setEmail(request.getEmail());
         }
 
-        // 🔐 Only ADMIN can update role
+        //  Only ADMIN can update role
         if (request.getRole() != null && SecurityUtil.isAdmin()) {
             requestedUser.setRole(request.getRole());
         }
@@ -101,14 +91,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(requestedUser);
     }
 
-    // ✅ CHANGE PASSWORD (SELF ONLY)
+    //  CHANGE PASSWORD (SELF ONLY)
     @Override
     public void changePassword(Long id, ChangePasswordRequest request) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // 🔐 Only self can change password
+        //  Only self can change password
         String loggedEmail = SecurityUtil.getCurrentUserEmail();
         if (!user.getEmail().equals(loggedEmail)) {
             throw new AccessDeniedException("You can change only your own password");

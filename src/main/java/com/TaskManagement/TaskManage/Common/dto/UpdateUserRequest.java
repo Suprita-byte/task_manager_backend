@@ -16,5 +16,5 @@ public class UpdateUserRequest {
 
     private Role role;
 
-    // getters & setters
+
 }

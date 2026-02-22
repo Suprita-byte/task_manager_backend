@@ -50,16 +50,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    // PUT - Update User (Using RequestParam)
-//    @PutMapping
-//    public ResponseEntity<User> updateUser(
-//            @RequestParam Long id,
-//            @Valid @RequestBody User user) {
-//
-//        return ResponseEntity.ok(userService.updateUser(id, user));
-//    }
 
-    // ✅ PATCH - UPDATE USER (SELF OR ADMIN)
+    //  PATCH - UPDATE USER (SELF OR ADMIN)
     @PatchMapping("/{id}")
     public ResponseEntity<User> updateUser(
             @PathVariable Long id,
@@ -67,7 +59,7 @@ public class UserController {
 
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
-    // ✅ PATCH - CHANGE PASSWORD (SELF ONLY)
+    //  PATCH - CHANGE PASSWORD (SELF ONLY)
     @PatchMapping("/{id}/change-password")
     public ResponseEntity<String> changePassword(
             @PathVariable Long id,

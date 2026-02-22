@@ -51,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         .setAuthentication(authToken);
 
             } catch (Exception e) {
-                // ❗ DO NOT RETURN 401 HERE
+                //  DO NOT RETURN 401 HERE
                 // Let Security handle invalid tokens
             }
         }

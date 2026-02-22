@@ -10,5 +10,4 @@ public class ChangePasswordRequest {
     private String oldPassword;
     private String newPassword;
 
-    // getters & setters
 }

@@ -20,13 +20,13 @@ public class SwaggerConfig {
                 .bearerFormat("JWT");
 
         return new OpenAPI()
-                // 🔹 API METADATA (this answers your question)
+                //  API METADATA (this answers your question)
                 .info(new Info()
                         .title("Task Manager API")
                         .version("1.0.0")
                         .description("REST APIs for Task Manager Application with JWT-based authentication"))
 
-                // 🔹 SECURITY CONFIG
+                //  SECURITY CONFIG
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", securityScheme))
                 .addSecurityItem(new SecurityRequirement()
