@@ -6,6 +6,8 @@ import com.TaskManagement.TaskManage.Entity.User;
 import com.TaskManagement.TaskManage.Repository.UserRepository;
 import com.TaskManagement.TaskManage.Security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -27,6 +30,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+
+        log.info("Login attempt for email: {}", request.getEmail());
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -36,9 +41,13 @@ public class AuthController {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User not found: {}", request.getEmail());
+                    return new RuntimeException("User not found");
+                });
 
         String token = jwtUtil.generateToken(user);
+        log.info("Login successful for user: {}", request.getEmail());
 
         return ResponseEntity.ok(new AuthResponse(token));
     }

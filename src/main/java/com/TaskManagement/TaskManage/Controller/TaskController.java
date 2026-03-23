@@ -6,6 +6,8 @@ import com.TaskManagement.TaskManage.Entity.Task;
 import com.TaskManagement.TaskManage.Service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,12 +26,14 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
+    private static final Logger log = LoggerFactory.getLogger(TaskController.class);
     private final TaskService taskService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create task", description = "Admin can assign task to user")
     @PostMapping
     public Task createTask(@RequestBody Task task) {
+        log.info("Creating task: {}", task.getTitle());
         return taskService.createTask(task);
     }
 
@@ -40,6 +44,7 @@ public class TaskController {
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
+        log.info("Fetching all tasks with page={} size={}", page, size);
 
         return taskService.getAllTasks(page, size, sortBy, direction);
     }
@@ -67,6 +72,7 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{taskId}")
     public String deleteTask(@PathVariable Long taskId) {
+        log.warn("Deleting task with id: {}", taskId);
         taskService.deleteTask(taskId);
         return "Task deleted successfully";
     }
